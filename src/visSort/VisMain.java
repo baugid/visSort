@@ -20,18 +20,22 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     public void switchSorter(String sorter) {
+        int[] array = null;
+        if (currentSorter != null && currentSorter.getCurrentStatus() != null) {
+            array = currentSorter.getCurrentStatus();
+        }
         switch (sorter.toLowerCase()) {
             case "testsort":
                 currentSorter = new TestSorter();
                 break;
             case "bubblesort":
-            case "bubble":
                 currentSorter = new BubbleSorter();
                 break;
             default:
                 currentSorter = new TestSorter();
                 break;
         }
+        currentSorter.addArray(array);
     }
 
     public int[] generateArray(int length) {
@@ -93,7 +97,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
                 return;
             }
         }
-        JOptionPane.showMessageDialog(ui, "Array wurde sotiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(ui, "Array wurde sortiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public synchronized void shouldBePaused() {
@@ -123,7 +127,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     public static void main(String[] args) {
-        VisMain visSort = new VisMain("bubble");
+        VisMain visSort = new VisMain("bubblesort");
         visSort.start();
     }
 
