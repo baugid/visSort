@@ -40,7 +40,7 @@ public class VisMain implements MenuActionReceiver {
         return out;
     }
 
-    public Image generateImg(int[] field) {
+    private Image generateImg(int[] field) {
         int barWidth = 50; //Breite (Berechnung?)
         int barDist = 100; //Abstand (Berechnung?)
         int pos = 0; //Position
@@ -54,7 +54,7 @@ public class VisMain implements MenuActionReceiver {
         return buffer;
     }
 
-    public void pause(int milis) {
+    private void pause(int milis) {
         try {
             Thread.sleep(milis);
         } catch (InterruptedException ex) {
@@ -68,6 +68,7 @@ public class VisMain implements MenuActionReceiver {
 
     public void start(int[] array) {
         currentSorter.addArray(array);
+        ui.addMenuActionReceiver(this);
         ui.setVisible(true);
         uiSize = ui.getContentSize();
         ui.draw(generateImg(currentSorter.getCurrentStatus()));
@@ -84,7 +85,7 @@ public class VisMain implements MenuActionReceiver {
             ui.draw(generateImg(currentSorter.getCurrentStatus()));
             pause(100);
         }
-        JOptionPane.showMessageDialog(ui,"Array wurde sotiert","Fertig",JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(ui, "Array wurde sotiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {
@@ -96,5 +97,11 @@ public class VisMain implements MenuActionReceiver {
     @Override
     public void useAlgorithm(String name) {
         switchSorter(name);
+    }
+
+    @Override
+    public void receiveNewArray(int[] array) {
+        currentSorter.addArray(array);
+        ui.draw(generateImg(currentSorter.getCurrentStatus()));
     }
 }

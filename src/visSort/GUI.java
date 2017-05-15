@@ -2,15 +2,18 @@ package visSort;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 
 public class GUI extends JFrame {
-    BarField field;
-    JMenuBar menu;
-    JMenu settings;
-    JMenuItem bubbleSort;
-    JMenuItem testSort;
+    private BarField field;
+    private JMenuBar menu;
+    private JMenu settings;
+    private JMenuItem bubbleSort;
+    private JMenuItem testSort;
+    private MenuActionReceiver rec;
 
     public GUI() {
         field = new BarField();
@@ -19,19 +22,48 @@ public class GUI extends JFrame {
         bubbleSort = new JMenuItem("Bubblesort");
         testSort = new JMenuItem("Testsort");
 
+        menu.add(settings);
+        settings.add(bubbleSort);
+        settings.add(testSort);
+
+        field.setPreferredSize(new Dimension(1200, 700));
+
+        super.setJMenuBar(menu);
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        super.requestFocus();
-        super.setSize(new Dimension(1200, 700));
         super.setResizable(false);
-        super.setLocationRelativeTo(null);
         super.setTitle("VisSort");
         super.add(field);
+
+        bubbleSort.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.useAlgorithm("bubble");
+                }
+            }
+        });
+        testSort.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.useAlgorithm("testsort");
+                }
+            }
+        });
+        super.pack();
+        super.setLocationRelativeTo(null);
+        super.requestFocus();
+    }
+
+    public void addMenuActionReceiver(MenuActionReceiver rec) {
+        this.rec = rec;
     }
 
     public void draw(Image img) {
         field.setImage(img);
         field.repaint();
     }
+
 
     public Dimension getContentSize() {
         return new Dimension(field.getWidth(), field.getHeight());
