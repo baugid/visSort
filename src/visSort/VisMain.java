@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Random;
 
-public class VisMain {
+public class VisMain implements MenuActionReceiver {
     private Sorter currentSorter;
     private GUI ui;
     private Dimension uiSize;
@@ -91,5 +91,10 @@ public class VisMain {
         VisMain visSort = new VisMain("bubble");
         visSort.start();
         visSort.sort();
+    }
+
+    @Override
+    public void useAlgorithm(String name) {
+        switchSorter(name);
     }
 }

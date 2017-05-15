@@ -7,9 +7,18 @@ import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame {
     BarField field;
+    JMenuBar menu;
+    JMenu settings;
+    JMenuItem bubbleSort;
+    JMenuItem testSort;
 
     public GUI() {
         field = new BarField();
+        menu = new JMenuBar();
+        settings = new JMenu("Settings");
+        bubbleSort = new JMenuItem("Bubblesort");
+        testSort = new JMenuItem("Testsort");
+
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         super.requestFocus();
         super.setSize(new Dimension(1200, 700));
