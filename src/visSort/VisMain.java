@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Random;
 
-public class VisMain implements MenuActionReceiver {
+public class VisMain extends Thread implements MenuActionReceiver {
     private Sorter currentSorter;
     private GUI ui;
     private Dimension uiSize;
@@ -62,11 +62,11 @@ public class VisMain implements MenuActionReceiver {
         }
     }
 
-    public void start(int arrayLength) {
-        start(generateArray(arrayLength));
+    public void init(int arrayLength) {
+        init(generateArray(arrayLength));
     }
 
-    public void start(int[] array) {
+    public void init(int[] array) {
         currentSorter.addArray(array);
         ui.addMenuActionReceiver(this);
         ui.setVisible(true);
@@ -74,8 +74,8 @@ public class VisMain implements MenuActionReceiver {
         ui.draw(generateImg(currentSorter.getCurrentStatus()));
     }
 
-    public void start() {
-        start(12);
+    public void init() {
+        init(12);
     }
 
     public void sort() {
@@ -88,10 +88,22 @@ public class VisMain implements MenuActionReceiver {
         JOptionPane.showMessageDialog(ui, "Array wurde sotiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    @Override
+    public synchronized void run() {
+        while (true) {
+            start();
+            sort();
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String[] args) {
         VisMain visSort = new VisMain("bubble");
         visSort.start();
-        visSort.sort();
     }
 
     @Override

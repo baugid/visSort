@@ -13,6 +13,7 @@ public class GUI extends JFrame {
     private JMenu settings;
     private JMenuItem bubbleSort;
     private JMenuItem testSort;
+    private JMenuItem regenerate;
     private MenuActionReceiver rec;
 
     public GUI() {
