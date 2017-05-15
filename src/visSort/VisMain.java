@@ -11,7 +11,8 @@ public class VisMain extends Thread implements MenuActionReceiver {
     private GUI ui;
     private Dimension uiSize;
     private boolean isSorting = false;
-    private Thread mainThread = this;
+    private volatile boolean shouldPause = false;
+    private volatile boolean shouldStop = false;
 
     public VisMain(String sorter) {
         switchSorter(sorter);
@@ -80,13 +81,30 @@ public class VisMain extends Thread implements MenuActionReceiver {
         init(12);
     }
 
-    public void sort() {
+    public synchronized void sort() {
         while (!currentSorter.isFinished()) {
             currentSorter.sortStep();
             ui.draw(generateImg(currentSorter.getCurrentStatus()));
+            shouldBePaused();
             pause(100);
+            shouldBePaused();
+            if (shouldStop) {
+                shouldStop = false;
+                return;
+            }
         }
         JOptionPane.showMessageDialog(ui, "Array wurde sotiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public synchronized void shouldBePaused() {
+        if (shouldPause) {
+            shouldPause = false;
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -117,8 +135,18 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     @Override
+    public void pauseSorting() {
+        shouldPause = true;
+    }
+
+    @Override
     public synchronized void beginSorting() {
         notifyAll();
+    }
+
+    @Override
+    public void stopSorting() {
+        shouldStop = true;
     }
 
     @Override

@@ -15,7 +15,6 @@ public class GUI extends JFrame {
     private JMenuItem testSort;
     private JMenuItem randArray;
     private JMenu start;
-    //TODO pause und stop implementieren
     private JMenu pause;
     private JMenu stop;
     private MenuActionReceiver rec;
@@ -84,6 +83,22 @@ public class GUI extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if (rec != null) {
                     rec.beginSorting();
+                }
+            }
+        });
+        pause.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.pauseSorting();
+                }
+            }
+        });
+        stop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.stopSorting();
                 }
             }
         });
