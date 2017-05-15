@@ -116,7 +116,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     @Override
-    public void beginSorting() {
+    public synchronized void beginSorting() {
         notifyAll();
     }
 

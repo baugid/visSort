@@ -22,6 +22,7 @@ public class BubbleSorter implements Sorter {
         array = toBeSorted;
         step1=0;
         step2=1;
+        finished = false;
     }
 
     @Override

@@ -11,12 +11,13 @@ public class TestSorter implements Sorter {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return finished;
     }
 
     @Override
     public void addArray(int[] toBeSorted) {
         array = toBeSorted;
+        finished = false;
     }
 
     @Override

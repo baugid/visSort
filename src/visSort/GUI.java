@@ -14,6 +14,10 @@ public class GUI extends JFrame {
     private JMenuItem bubbleSort;
     private JMenuItem testSort;
     private JMenuItem randArray;
+    private JMenu start;
+    //TODO pause und stop implementieren
+    private JMenu pause;
+    private JMenu stop;
     private MenuActionReceiver rec;
 
     public GUI() {
@@ -23,11 +27,17 @@ public class GUI extends JFrame {
         bubbleSort = new JMenuItem("Bubblesort");
         testSort = new JMenuItem("Testsort");
         randArray = new JMenuItem("neues Zufallarray");
+        start = new JMenu("Start");
+        pause = new JMenu("Pause");
+        stop = new JMenu("Stop");
 
         menu.add(settings);
         settings.add(bubbleSort);
         settings.add(testSort);
         settings.add(randArray);
+        menu.add(start);
+        menu.add(pause);
+        menu.add(stop);
 
         field.setPreferredSize(new Dimension(1200, 700));
 
@@ -66,6 +76,14 @@ public class GUI extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if (rec != null) {
                     rec.receiveNewArray(null);
+                }
+            }
+        });
+        start.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.beginSorting();
                 }
             }
         });
