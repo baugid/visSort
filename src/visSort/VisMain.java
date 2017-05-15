@@ -6,10 +6,11 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Random;
 
-public class VisMain implements MenuActionReceiver {
+public class VisMain extends Thread implements MenuActionReceiver {
     private Sorter currentSorter;
     private GUI ui;
     private Dimension uiSize;
+    private boolean isSorting = false;
 
     public VisMain(String sorter) {
         switchSorter(sorter);
@@ -40,7 +41,7 @@ public class VisMain implements MenuActionReceiver {
         return out;
     }
 
-    public Image generateImg(int[] field) {
+    private Image generateImg(int[] field) {
         int barWidth = 50; //Breite (Berechnung?)
         int barDist = 100; //Abstand (Berechnung?)
         int pos = 0; //Position
@@ -54,7 +55,7 @@ public class VisMain implements MenuActionReceiver {
         return buffer;
     }
 
-    public void pause(int milis) {
+    private void pause(int milis) {
         try {
             Thread.sleep(milis);
         } catch (InterruptedException ex) {
@@ -62,39 +63,71 @@ public class VisMain implements MenuActionReceiver {
         }
     }
 
-    public void start(int arrayLength) {
-        start(generateArray(arrayLength));
+    public void init(int arrayLength) {
+        init(generateArray(arrayLength));
     }
 
-    public void start(int[] array) {
+    public void init(int[] array) {
         currentSorter.addArray(array);
+        ui.addMenuActionReceiver(this);
         ui.setVisible(true);
         uiSize = ui.getContentSize();
         ui.draw(generateImg(currentSorter.getCurrentStatus()));
     }
 
-    public void start() {
-        start(12);
+    public void init() {
+        init(12);
     }
 
     public void sort() {
-        pause(1000);
         while (!currentSorter.isFinished()) {
             currentSorter.sortStep();
             ui.draw(generateImg(currentSorter.getCurrentStatus()));
             pause(100);
         }
-        JOptionPane.showMessageDialog(ui,"Array wurde sotiert","Fertig",JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(ui, "Array wurde sotiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public synchronized void run() {
+        init();
+        while (true) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            isSorting = true;
+            sort();
+            isSorting = false;
+        }
     }
 
     public static void main(String[] args) {
         VisMain visSort = new VisMain("bubble");
         visSort.start();
-        visSort.sort();
     }
 
     @Override
     public void useAlgorithm(String name) {
+        if (isSorting)
+            return;
         switchSorter(name);
+    }
+
+    @Override
+    public synchronized void beginSorting() {
+        notifyAll();
+    }
+
+    @Override
+    public void receiveNewArray(int[] array) {
+        if (isSorting)
+            return;
+        if (array == null) {
+            array = generateArray(currentSorter.getCurrentStatus().length);
+        }
+        currentSorter.addArray(array);
+        ui.draw(generateImg(currentSorter.getCurrentStatus()));
     }
 }
