@@ -6,5 +6,6 @@ package visSort;
 public interface MenuActionReceiver {
     void useAlgorithm(String name);
 
+    void beginSorting();
     void receiveNewArray(int[] array);
 }

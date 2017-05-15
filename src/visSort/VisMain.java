@@ -10,6 +10,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
     private Sorter currentSorter;
     private GUI ui;
     private Dimension uiSize;
+    private boolean isSorting = false;
 
     public VisMain(String sorter) {
         switchSorter(sorter);
@@ -79,7 +80,6 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     public void sort() {
-        pause(1000);
         while (!currentSorter.isFinished()) {
             currentSorter.sortStep();
             ui.draw(generateImg(currentSorter.getCurrentStatus()));
@@ -90,14 +90,16 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public synchronized void run() {
+        init();
         while (true) {
-            start();
-            sort();
             try {
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            isSorting = true;
+            sort();
+            isSorting = false;
         }
     }
 
@@ -108,11 +110,23 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public void useAlgorithm(String name) {
+        if (isSorting)
+            return;
         switchSorter(name);
     }
 
     @Override
+    public void beginSorting() {
+        notifyAll();
+    }
+
+    @Override
     public void receiveNewArray(int[] array) {
+        if (isSorting)
+            return;
+        if (array == null) {
+            array = generateArray(currentSorter.getCurrentStatus().length);
+        }
         currentSorter.addArray(array);
         ui.draw(generateImg(currentSorter.getCurrentStatus()));
     }

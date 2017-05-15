@@ -13,7 +13,7 @@ public class GUI extends JFrame {
     private JMenu settings;
     private JMenuItem bubbleSort;
     private JMenuItem testSort;
-    private JMenuItem regenerate;
+    private JMenuItem randArray;
     private MenuActionReceiver rec;
 
     public GUI() {
@@ -22,10 +22,12 @@ public class GUI extends JFrame {
         settings = new JMenu("Settings");
         bubbleSort = new JMenuItem("Bubblesort");
         testSort = new JMenuItem("Testsort");
+        randArray = new JMenuItem("neues Zufallarray");
 
         menu.add(settings);
         settings.add(bubbleSort);
         settings.add(testSort);
+        settings.add(randArray);
 
         field.setPreferredSize(new Dimension(1200, 700));
 
@@ -35,6 +37,14 @@ public class GUI extends JFrame {
         super.setTitle("VisSort");
         super.add(field);
 
+        setMouseListeners();
+
+        super.pack();
+        super.setLocationRelativeTo(null);
+        super.requestFocus();
+    }
+
+    private void setMouseListeners() {
         bubbleSort.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -51,9 +61,14 @@ public class GUI extends JFrame {
                 }
             }
         });
-        super.pack();
-        super.setLocationRelativeTo(null);
-        super.requestFocus();
+        randArray.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.receiveNewArray(null);
+                }
+            }
+        });
     }
 
     public void addMenuActionReceiver(MenuActionReceiver rec) {
