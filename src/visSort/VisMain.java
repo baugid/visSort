@@ -11,6 +11,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
     private GUI ui;
     private Dimension uiSize;
     private boolean isSorting = false;
+    private Thread mainThread = this;
 
     public VisMain(String sorter) {
         switchSorter(sorter);
