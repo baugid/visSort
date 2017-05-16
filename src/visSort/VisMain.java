@@ -55,8 +55,8 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     private Image generateImg() {
         int[] field = currentSorter.getCurrentStatus();
-        int barWidth = 50; //Breite (Berechnung?)
-        int barDist = 100; //Abstand (Berechnung?)
+        int barWidth = (3 * uiSize.width) / (4 * field.length); //Breite (Berechnung?)
+        int barDist = (3 * barWidth) / 2; //Abstand (Berechnung?)
         int pos = 0; //Position
         int mult = (uiSize.height / Arrays.stream(field).max().getAsInt()) - (uiSize.height / 10) / Arrays.stream(field).max().getAsInt(); //Aus dem Maximum und der Hoehe Laengenmult errechnen mit Platz nach unten minus einzehntel Margin
         ArrayList<Integer> markedVals = currentSorter.selectedElements();
@@ -156,7 +156,8 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public void pauseSorting() {
-        shouldPause = true;
+        if (isSorting)
+            shouldPause = true;
     }
 
     @Override
@@ -166,7 +167,10 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public void stopSorting() {
-        shouldStop = true;
+        if (isSorting) {
+            shouldStop = true;
+            ui.draw(generateImg());
+        }
     }
 
     @Override
@@ -178,5 +182,17 @@ public class VisMain extends Thread implements MenuActionReceiver {
         }
         currentSorter.addArray(array);
         ui.draw(generateImg());
+    }
+
+    @Override
+    public void singleStep() {
+        if (isSorting && !shouldPause)
+            return;
+        if (!currentSorter.isFinished()) {
+            currentSorter.sortStep();
+            ui.draw(generateImg());
+        }
+        if (currentSorter.isFinished())
+            JOptionPane.showMessageDialog(ui, "Array wurde sortiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
     }
 }

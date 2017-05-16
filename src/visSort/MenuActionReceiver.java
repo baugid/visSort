@@ -13,4 +13,6 @@ public interface MenuActionReceiver {
     void stopSorting();
 
     void receiveNewArray(int[] array);
+
+    void singleStep();
 }

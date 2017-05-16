@@ -66,6 +66,9 @@ public class BubbleSorter implements Sorter {
 
     @Override
     public ArrayList<Integer> selectedElements() {
+        if ((step2 == 1 && step1 == 0) || isFinished() || ((step1 + 1) >= array.length - step2)) {
+            return null;
+        }
         ArrayList<Integer> out = new ArrayList<>();
         out.add(step1);
         out.add(step1 + 1);

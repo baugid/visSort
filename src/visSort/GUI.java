@@ -17,6 +17,7 @@ public class GUI extends JFrame {
     private JMenu start;
     private JMenu pause;
     private JMenu stop;
+    private JMenu step;
     private MenuActionReceiver rec;
     private final String[] sorter;
 
@@ -30,6 +31,7 @@ public class GUI extends JFrame {
         start = new JMenu("Start");
         pause = new JMenu("Pause");
         stop = new JMenu("Stop");
+        step = new JMenu("Schritt");
         this.sorter = sorter;
 
         menu.add(settings);
@@ -38,6 +40,7 @@ public class GUI extends JFrame {
         menu.add(start);
         menu.add(pause);
         menu.add(stop);
+        menu.add(step);
 
         for (int i = 0; i < sorter.length; i++) {
             sorterEntries[i] = new JMenuItem(sorter[i]);
@@ -100,6 +103,14 @@ public class GUI extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if (rec != null) {
                     rec.stopSorting();
+                }
+            }
+        });
+        step.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.singleStep();
                 }
             }
         });
