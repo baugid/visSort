@@ -18,9 +18,9 @@ public class GUI extends JFrame {
     private JMenu pause;
     private JMenu stop;
     private MenuActionReceiver rec;
-    private final String[] sorter = {"Bubblesort", "Testsort"};
+    private final String[] sorter;
 
-    public GUI() {
+    public GUI(String[] sorter) {
         field = new BarField();
         menu = new JMenuBar();
         settings = new JMenu("Settings");
@@ -30,6 +30,7 @@ public class GUI extends JFrame {
         start = new JMenu("Start");
         pause = new JMenu("Pause");
         stop = new JMenu("Stop");
+        this.sorter = sorter;
 
         menu.add(settings);
         settings.add(chooseSorter);

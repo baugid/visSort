@@ -4,9 +4,13 @@ package visSort;
  * Created by Gideon on 14.05.2017.
  */
 public interface Sorter {
+    Sorter generateNewInstance();
+
     boolean isFinished();
 
     void addArray(int[] toBeSorted);
+
+    void resetSorting();
 
     int[] getCurrentStatus();
 

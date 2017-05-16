@@ -10,9 +10,14 @@ public class BubbleSorter implements Sorter {
     private int step2;
 
     @Override
+    public Sorter generateNewInstance() {
+        return new BubbleSorter();
+    }
+
+    @Override
     public boolean isFinished() {
-        if(step2==array.length){
-            finished=true;
+        if (step2 == array.length) {
+            finished = true;
         }
         return finished;
     }
@@ -20,9 +25,15 @@ public class BubbleSorter implements Sorter {
     @Override
     public void addArray(int[] toBeSorted) {
         array = toBeSorted;
-        step1=0;
-        step2=1;
+        step1 = 0;
+        step2 = 1;
         finished = false;
+    }
+
+    @Override
+    public void resetSorting() {
+        step1 = 0;
+        step2 = 1;
     }
 
     @Override
@@ -32,22 +43,22 @@ public class BubbleSorter implements Sorter {
 
     @Override
     public void sortStep() {
-        if(array==null){
+        if (array == null) {
             return;
         }
         int buf;
-        if(array[step1]>array[step1+1]) {
-            buf=array[step1];
-            array[step1]=array[step1+1];
-            array[step1+1]=buf;
+        if (array[step1] > array[step1 + 1]) {
+            buf = array[step1];
+            array[step1] = array[step1 + 1];
+            array[step1 + 1] = buf;
         }
         step1++;
-        if(step1==array.length-step2){
+        if (step1 == array.length - step2) {
             step2++;
-            step1=0;
+            step1 = 0;
         }
-        if(step2==array.length){
-            finished=true;
+        if (step2 == array.length) {
+            finished = true;
         }
     }
 }

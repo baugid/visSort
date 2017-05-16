@@ -10,6 +10,11 @@ public class TestSorter implements Sorter {
     private int[] array;
 
     @Override
+    public Sorter generateNewInstance() {
+        return new TestSorter();
+    }
+
+    @Override
     public boolean isFinished() {
         return finished;
     }
@@ -18,6 +23,11 @@ public class TestSorter implements Sorter {
     public void addArray(int[] toBeSorted) {
         array = toBeSorted;
         finished = false;
+    }
+
+    @Override
+    public void resetSorting() {
+
     }
 
     @Override

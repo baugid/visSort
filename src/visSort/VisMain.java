@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 
 public class VisMain extends Thread implements MenuActionReceiver {
@@ -13,27 +14,31 @@ public class VisMain extends Thread implements MenuActionReceiver {
     private boolean isSorting = false;
     private volatile boolean shouldPause = false;
     private volatile boolean shouldStop = false;
+    private HashMap<String, Sorter> sorterHashMap;
+
+    private void addAllSorter() {
+        sorterHashMap.put("Bubblesort", new BubbleSorter());
+        sorterHashMap.put("Testsort", new TestSorter());
+    }
 
     public VisMain(String sorter) {
+        sorterHashMap = new HashMap<>();
+        addAllSorter();
         switchSorter(sorter);
-        ui = new GUI();
+        ui = new GUI(sorterHashMap.keySet().stream().toArray(size -> new String[size]));
     }
+
 
     public void switchSorter(String sorter) {
         int[] array = null;
         if (currentSorter != null && currentSorter.getCurrentStatus() != null) {
             array = currentSorter.getCurrentStatus();
         }
-        switch (sorter.toLowerCase()) {
-            case "testsort":
-                currentSorter = new TestSorter();
-                break;
-            case "bubblesort":
-                currentSorter = new BubbleSorter();
-                break;
-            default:
-                currentSorter = new TestSorter();
-                break;
+        currentSorter = sorterHashMap.get(sorter);
+        if (currentSorter == null) {
+            currentSorter = new TestSorter();
+        } else {
+            currentSorter = currentSorter.generateNewInstance();
         }
         currentSorter.addArray(array);
     }
@@ -94,6 +99,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
             shouldBePaused();
             if (shouldStop) {
                 shouldStop = false;
+                currentSorter.resetSorting();
                 return;
             }
         }
