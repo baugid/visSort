@@ -3,6 +3,7 @@ package visSort;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
@@ -52,15 +53,24 @@ public class VisMain extends Thread implements MenuActionReceiver {
         return out;
     }
 
-    private Image generateImg(int[] field) {
+    private Image generateImg() {
+        int[] field = currentSorter.getCurrentStatus();
         int barWidth = 50; //Breite (Berechnung?)
         int barDist = 100; //Abstand (Berechnung?)
         int pos = 0; //Position
         int mult = (uiSize.height / Arrays.stream(field).max().getAsInt()) - (uiSize.height / 10) / Arrays.stream(field).max().getAsInt(); //Aus dem Maximum und der Hoehe Laengenmult errechnen mit Platz nach unten minus einzehntel Margin
+        ArrayList<Integer> markedVals = currentSorter.selectedElements();
+        if (markedVals == null) {
+            markedVals = new ArrayList<>();
+        }
         BufferedImage buffer = new BufferedImage(uiSize.width, uiSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics g = buffer.getGraphics();
-        for (int el : field) {
-            g.fillRect(pos, 0, barWidth, el * mult);
+        for (int i = 0; i < field.length; i++) {
+            g.setColor(Color.WHITE);
+            if (markedVals.indexOf(i) != -1) {
+                g.setColor(Color.YELLOW);
+            }
+            g.fillRect(pos, 0, barWidth, field[i] * mult);
             pos += barDist;
         }
         return buffer;
@@ -83,7 +93,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
         ui.addMenuActionReceiver(this);
         ui.setVisible(true);
         uiSize = ui.getContentSize();
-        ui.draw(generateImg(currentSorter.getCurrentStatus()));
+        ui.draw(generateImg());
     }
 
     public void init() {
@@ -93,7 +103,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
     public synchronized void sort() {
         while (!currentSorter.isFinished()) {
             currentSorter.sortStep();
-            ui.draw(generateImg(currentSorter.getCurrentStatus()));
+            ui.draw(generateImg());
             shouldBePaused();
             pause(100);
             shouldBePaused();
@@ -167,6 +177,6 @@ public class VisMain extends Thread implements MenuActionReceiver {
             array = generateArray(currentSorter.getCurrentStatus().length);
         }
         currentSorter.addArray(array);
-        ui.draw(generateImg(currentSorter.getCurrentStatus()));
+        ui.draw(generateImg());
     }
 }

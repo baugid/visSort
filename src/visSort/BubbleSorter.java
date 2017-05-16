@@ -1,5 +1,7 @@
 package visSort;
 
+import java.util.ArrayList;
+
 /**
  * Created by Gideon on 15.05.2017.
  */
@@ -60,5 +62,13 @@ public class BubbleSorter implements Sorter {
         if (step2 == array.length) {
             finished = true;
         }
+    }
+
+    @Override
+    public ArrayList<Integer> selectedElements() {
+        ArrayList<Integer> out = new ArrayList<>();
+        out.add(step1);
+        out.add(step1 + 1);
+        return out;
     }
 }

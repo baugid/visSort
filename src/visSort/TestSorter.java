@@ -1,5 +1,6 @@
 package visSort;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -39,5 +40,10 @@ public class TestSorter implements Sorter {
     public void sortStep() {
         Arrays.sort(array);
         finished = true;
+    }
+
+    @Override
+    public ArrayList<Integer> selectedElements() {
+        return null;
     }
 }

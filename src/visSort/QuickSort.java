@@ -1,5 +1,7 @@
 package visSort;
 
+import java.util.ArrayList;
+
 /**
  * Created by Gideon on 15.05.2017.
  */
@@ -33,5 +35,10 @@ public class QuickSort implements Sorter {
     @Override
     public void sortStep() {
 
+    }
+
+    @Override
+    public ArrayList<Integer> selectedElements() {
+        return null;
     }
 }
