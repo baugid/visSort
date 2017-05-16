@@ -105,11 +105,18 @@ public class VisMain extends Thread implements MenuActionReceiver {
             currentSorter.sortStep();
             ui.draw(generateImg());
             shouldBePaused();
+            if (shouldStop) {
+                shouldStop = false;
+                currentSorter.resetSorting();
+                ui.draw(generateImg());
+                return;
+            }
             pause(100);
             shouldBePaused();
             if (shouldStop) {
                 shouldStop = false;
                 currentSorter.resetSorting();
+                ui.draw(generateImg());
                 return;
             }
         }
@@ -118,12 +125,13 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     public synchronized void shouldBePaused() {
         if (shouldPause) {
-            shouldPause = false;
             try {
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            pause(5);
+            shouldPause = false;
         }
     }
 
@@ -161,21 +169,29 @@ public class VisMain extends Thread implements MenuActionReceiver {
     }
 
     @Override
-    public synchronized void beginSorting() {
-        notifyAll();
+    public void beginSorting() {
+        if (!isSorting || shouldPause) {
+            wakeUp();
+        }
     }
 
     @Override
     public void stopSorting() {
         if (isSorting) {
             shouldStop = true;
-            ui.draw(generateImg());
+            if (shouldPause) {
+                wakeUp();
+            }
         }
+    }
+
+    public synchronized void wakeUp() {
+        notifyAll();
     }
 
     @Override
     public void receiveNewArray(int[] array) {
-        if (isSorting)
+        if (isSorting && !shouldPause)
             return;
         if (array == null) {
             array = generateArray(currentSorter.getCurrentStatus().length);
@@ -186,11 +202,10 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public void singleStep() {
-        if (isSorting && !shouldPause)
+        if (!shouldPause)
             return;
         if (!currentSorter.isFinished()) {
             currentSorter.sortStep();
-            ui.draw(generateImg());
         }
         if (currentSorter.isFinished())
             JOptionPane.showMessageDialog(ui, "Array wurde sortiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
