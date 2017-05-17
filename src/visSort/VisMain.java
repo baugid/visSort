@@ -55,8 +55,8 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     private Image generateImg() {
         int[] field = currentSorter.getCurrentStatus();
-        int barWidth = (3 * uiSize.width) / (4 * field.length); //Breite (Berechnung?)
-        int barDist = (3 * barWidth) / 2; //Abstand (Berechnung?)
+        int barWidth = (3 * uiSize.width) / (4 * field.length); //Breite berechnen
+        int barDist = uiSize.width / (4 * field.length) + barWidth; //Abstand berechnen
         int pos = 0; //Position
         int mult = (uiSize.height / Arrays.stream(field).max().getAsInt()) - (uiSize.height / 10) / Arrays.stream(field).max().getAsInt(); //Aus dem Maximum und der Hoehe Laengenmult errechnen mit Platz nach unten minus einzehntel Margin
         ArrayList<Integer> markedVals = currentSorter.selectedElements();
@@ -123,7 +123,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
         JOptionPane.showMessageDialog(ui, "Array wurde sortiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public synchronized void shouldBePaused() {
+    private synchronized void shouldBePaused() {
         if (shouldPause) {
             try {
                 wait();
@@ -160,6 +160,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
         if (isSorting)
             return;
         switchSorter(name);
+        ui.draw(generateImg());
     }
 
     @Override
@@ -185,7 +186,7 @@ public class VisMain extends Thread implements MenuActionReceiver {
         }
     }
 
-    public synchronized void wakeUp() {
+    private synchronized void wakeUp() {
         notifyAll();
     }
 
@@ -202,10 +203,11 @@ public class VisMain extends Thread implements MenuActionReceiver {
 
     @Override
     public void singleStep() {
-        if (!shouldPause)
+        if (isSorting && !shouldPause)
             return;
         if (!currentSorter.isFinished()) {
             currentSorter.sortStep();
+            ui.draw(generateImg());
         }
         if (currentSorter.isFinished())
             JOptionPane.showMessageDialog(ui, "Array wurde sortiert", "Fertig", JOptionPane.INFORMATION_MESSAGE);
