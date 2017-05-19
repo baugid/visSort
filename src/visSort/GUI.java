@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 
 public class GUI extends JFrame {
@@ -14,6 +15,7 @@ public class GUI extends JFrame {
     private JMenu chooseSorter;
     private JMenuItem[] sorterEntries;
     private JMenuItem randArray;
+    private JMenuItem inputArray;
     private JMenu start;
     private JMenu pause;
     private JMenu stop;
@@ -32,11 +34,13 @@ public class GUI extends JFrame {
         pause = new JMenu("Pause");
         stop = new JMenu("Stop");
         step = new JMenu("Schritt");
+        inputArray = new JMenuItem("Array eingeben");
         this.sorter = sorter;
 
         menu.add(settings);
         settings.add(chooseSorter);
         settings.add(randArray);
+        settings.add(inputArray);
         menu.add(start);
         menu.add(pause);
         menu.add(stop);
@@ -114,6 +118,30 @@ public class GUI extends JFrame {
                 }
             }
         });
+        inputArray.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (rec != null) {
+                    rec.receiveNewArray(requestNewArray());
+                }
+            }
+        });
+    }
+
+    private int[] requestNewArray() {
+        String s;
+        do {
+            s = JOptionPane.showInputDialog(this, "trenne die Zahlen mittels Leerzeichen, Semikola, Kommata oder eine Kombination dieser.", "Arrayeingabe", JOptionPane.QUESTION_MESSAGE);
+        } while (s == null || s.equals(""));
+        int array[] = Arrays.stream(s.split(",|;| ")).mapToInt((w) -> {
+            int i = 0;
+            try {
+                i = Integer.parseInt(w);
+            } catch (Exception e) {
+            }
+            return i > 0 ? i : -1;
+        }).filter((i) -> i > 0).toArray();
+        return array;
     }
 
     public void addMenuActionReceiver(MenuActionReceiver rec) {
